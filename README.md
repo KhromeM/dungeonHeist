@@ -54,7 +54,7 @@ A turn-based dungeon crawler game where players compete for treasure using block
 
 ### Game Flow
 
-1. Players submit moves through MetaMask (costs small fee in ETH)
+1. Players submit moves through MetaMask
 2. Smart contract records moves and emits events
 3. Every 5 minutes, server:
    - Collects all player moves
@@ -66,7 +66,7 @@ A turn-based dungeon crawler game where players compete for treasure using block
 ### Player Guide
 
 1. Connect MetaMask wallet with some ETH
-2. Submit moves (costs small fee, converted to MATIC for gas)
+2. Submit moves
 3. Wait for turn processing (5 minutes)
 4. Monitor map for state updates
 5. Negotiate with or fight guards

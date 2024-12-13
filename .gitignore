@@ -1,0 +1,23 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/dungeon-heist/node_modules
+/dungeon-heist/.pnp
+/dungeon-heist.pnp.js
+
+# testing
+/dungeon-heist/coverage
+
+# production
+/dungeon-heist/build
+
+# misc
+/dungeon-heist.DS_Store
+/dungeon-heist.env.local
+/dungeon-heist.env.development.local
+/dungeon-heist.env.test.local
+/dungeon-heist.env.production.local
+
+/dungeon-heistnpm-debug.log*
+/dungeon-heistyarn-debug.log*
+/dungeon-heistyarn-error.log*

@@ -21,3 +21,4 @@
 /dungeon-heistnpm-debug.log*
 /dungeon-heistyarn-debug.log*
 /dungeon-heistyarn-error.log*
+.env

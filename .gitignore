@@ -18,6 +18,8 @@
 /frontend.env.test.local
 /frontend.env.production.local
 
-/frontendnpm-debug.log*
-/frontendyarn-debug.log*
-/frontendyarn-error.log*
+
+**/.env
+**/node_modules
+**/package-lock.json
+

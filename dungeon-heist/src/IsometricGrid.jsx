@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 
-const TILE_WIDTH = 60;
-const TILE_HEIGHT = TILE_WIDTH * 0.5;
-const TILE_DEPTH = 7;
-const TILE_GAP = 5;
+const TILE_BASE = 60; // Base size for calculations
+const TILE_WIDTH = TILE_BASE * 0.95; // Slightly smaller than base for gap
+const TILE_HEIGHT = TILE_BASE * 0.45; // Maintain aspect ratio
+const TILE_DEPTH = 2;
 
-// Helper function to calculate isometric coordinates
+// Calculate isometric coordinates using base size for spacing but render smaller tiles
 const toIso = (x, y) => ({
-	x: (x - y) * (TILE_WIDTH / 2),
-	y: (x + y) * (TILE_HEIGHT / 2),
+	x: (x - y) * (TILE_BASE / 2),
+	y: (x + y) * ((TILE_BASE / 2) * 0.5),
 });
 
 const Tile = ({ x, y, type = "default", isSelected, onClick, tileTypes }) => {
@@ -38,9 +38,10 @@ const Tile = ({ x, y, type = "default", isSelected, onClick, tileTypes }) => {
           L ${TILE_WIDTH / 2} ${TILE_DEPTH}
           L 0 ${TILE_HEIGHT / 2 + TILE_DEPTH}
           L 0 ${TILE_HEIGHT / 2}
+          Z
         `}
 				fill="#e4e4e4"
-				opacity="0.8"
+				opacity="0.9"
 			/>
 
 			{/* Left side */}
@@ -50,9 +51,10 @@ const Tile = ({ x, y, type = "default", isSelected, onClick, tileTypes }) => {
           L ${-TILE_WIDTH / 2} ${TILE_DEPTH}
           L 0 ${TILE_HEIGHT / 2 + TILE_DEPTH}
           L 0 ${TILE_HEIGHT / 2}
+          Z
         `}
 				fill="#d4d4d4"
-				opacity="0.8"
+				opacity="0.9"
 			/>
 
 			{/* Top face */}
@@ -65,7 +67,7 @@ const Tile = ({ x, y, type = "default", isSelected, onClick, tileTypes }) => {
           Z
         `}
 				fill={fillColor}
-				stroke="#e0e0e0"
+				stroke={isHovered ? "#e0e0e0" : "none"}
 				strokeWidth="0.5"
 			/>
 		</g>
@@ -73,15 +75,15 @@ const Tile = ({ x, y, type = "default", isSelected, onClick, tileTypes }) => {
 };
 
 const IsometricGrid = ({
-	width = 6,
-	height = 6,
+	width = 16,
+	height = 16,
 	tileTypes = {
 		default: "#ffffff",
 		selected: "#f0f0f0",
 		hover: "#fafafa",
 		empty: "transparent",
 	},
-	tiles = [], // Array of {x, y, type}
+	tiles = [],
 }) => {
 	const [selectedTile, setSelectedTile] = useState(null);
 	const [zoom, setZoom] = useState(1);
@@ -89,18 +91,24 @@ const IsometricGrid = ({
 	const [isDragging, setIsDragging] = useState(false);
 	const containerRef = useRef(null);
 
-	// Calculate viewBox size based on grid dimensions
 	const maxDim = Math.max(width, height);
-	const viewBoxSize = maxDim * (TILE_WIDTH + TILE_GAP) * 1.5;
+	const viewBoxSize = maxDim * TILE_BASE * 1;
 
-	// Handle zooming
-	const handleWheel = (e) => {
-		e.preventDefault();
-		const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-		setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 0.5), 3));
-	};
+	useEffect(() => {
+		const element = containerRef.current;
+		const handleWheel = (e) => {
+			e.preventDefault();
+			const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+			setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 0.5), 3));
+		};
 
-	// Ensure selected tile is visible
+		element?.addEventListener("wheel", handleWheel, { passive: false });
+
+		return () => {
+			element?.removeEventListener("wheel", handleWheel);
+		};
+	}, []);
+
 	useEffect(() => {
 		if (selectedTile && containerRef.current) {
 			const { x, y } = toIso(selectedTile.x, selectedTile.y);
@@ -121,11 +129,7 @@ const IsometricGrid = ({
 	}, [selectedTile]);
 
 	return (
-		<div
-			className="w-full h-screen bg-gray-50"
-			ref={containerRef}
-			onWheel={handleWheel}
-		>
+		<div className="w-full h-screen bg-gray-900" ref={containerRef}>
 			<motion.div
 				drag
 				dragMomentum={false}
@@ -147,23 +151,16 @@ const IsometricGrid = ({
 				>
 					{Array.from({ length: height }, (_, y) =>
 						Array.from({ length: width }, (_, x) => {
-							const tileData = tiles.find((t) => t.x === x && t.y === y);
-							const type = tileData?.type || "default";
-
-							if (type !== "empty") {
-								return (
-									<Tile
-										key={`${x}-${y}`}
-										x={x}
-										y={y}
-										type={type}
-										isSelected={selectedTile?.x === x && selectedTile?.y === y}
-										onClick={() => !isDragging && setSelectedTile({ x, y })}
-										tileTypes={tileTypes}
-									/>
-								);
-							}
-							return null;
+							return (
+								<Tile
+									key={`${x}-${y}`}
+									x={x}
+									y={y}
+									isSelected={selectedTile?.x === x && selectedTile?.y === y}
+									onClick={() => !isDragging && setSelectedTile({ x, y })}
+									tileTypes={tileTypes}
+								/>
+							);
 						})
 					)}
 				</svg>

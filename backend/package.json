@@ -1,17 +1,19 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@openzeppelin/contracts": "^5.1.0",
-    "dotenv": "^16.4.7",
-    "hardhat": "^2.22.17"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "/src/server.mjs",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node src/server.mjs"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"ethers": "^6.13.4",
+		"express": "^4.21.2",
+		"express-ws": "^5.0.2"
+	}
 }

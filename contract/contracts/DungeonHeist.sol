@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract DungeonGame is Ownable, ReentrancyGuard {
+contract DungeonGame is ReentrancyGuard {
 
     enum EntityType { Player, Guard, Chest, Weapon }
     enum ActionType { Join, Move, Chat, Attack }
@@ -29,7 +28,7 @@ contract DungeonGame is Ownable, ReentrancyGuard {
     // State variables
     EntityWithAddress[] public entities;
     address public backend;
-    bool public isProcessing;
+    bool public isProcessing = false;
     uint256 public constant PLAYER_FEE = 0.0025 ether;
     address public devWallet;
     uint8 public currentPlayers;
@@ -42,8 +41,9 @@ contract DungeonGame is Ownable, ReentrancyGuard {
         uint256 timestamp
     );
     
-    event TurnProcessing(uint256 timestamp);
-    event StateUpdated(uint256 timestamp);
+    event Withdraw(address indexed to, uint256 amount, uint256 timestamp);
+    event TurnProcessing(uint256 timestamp, bool isProcessing);
+    event GameStateUpdated(uint256 timestamp);
     event FeeDistributed(uint256 toChests, uint256 toDev);
 
     modifier onlyBackend() {
@@ -90,7 +90,12 @@ contract DungeonGame is Ownable, ReentrancyGuard {
 
     function startTurnProcessing() external onlyBackend {
         isProcessing = true;
-        emit TurnProcessing(block.timestamp);
+        emit TurnProcessing(block.timestamp, isProcessing);
+    }
+
+    function stopTurnProcessing() external onlyBackend {
+        isProcessing = false;
+        emit TurnProcessing(block.timestamp,isProcessing);
     }
 
     function updateGameState(
@@ -105,8 +110,7 @@ contract DungeonGame is Ownable, ReentrancyGuard {
         
         currentPlayers = alivePlayers;
         
-        isProcessing = false;
-        emit StateUpdated(block.timestamp);
+        emit GameStateUpdated(block.timestamp);
     }
 
     function getGameState() 
@@ -121,6 +125,8 @@ contract DungeonGame is Ownable, ReentrancyGuard {
         require(amount <= address(this).balance, "Insufficient contract balance");
         (bool success, ) = to.call{value: amount}("");
         require(success, "Withdrawal failed");
+        emit Withdraw(to, amount, block.timestamp);
+
     }
 
     receive() external payable {}

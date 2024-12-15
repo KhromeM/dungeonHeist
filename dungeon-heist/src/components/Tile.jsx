@@ -3,7 +3,7 @@ import IsometricPlayer from "./IsometricPlayer";
 
 const TILE_WIDTH = 60;
 const TILE_HEIGHT = TILE_WIDTH * 0.5;
-const BASE_DEPTH = 30;
+const BASE_DEPTH = 20;
 
 const TERRAIN_TYPES = {
 	GRASS: {
@@ -75,13 +75,13 @@ const Tile = ({
 	terrainType = "GRASS",
 	isSelected,
 	onHover,
-	player = null,
+	player = null, // { imageUrl: string, id: string }
 }) => {
 	const [isHovered, setIsHovered] = useState(false);
 	const { x: isoX, y: isoY } = toIso(x, y);
 
 	const terrain = TERRAIN_TYPES[terrainType];
-	const tileDepth = BASE_DEPTH; // * terrain.heightMod;
+	const tileDepth = BASE_DEPTH; //* terrain.heightMod;
 
 	const getOpacity = () => {
 		if (isHovered) return 1;
@@ -138,10 +138,17 @@ const Tile = ({
 				opacity={getOpacity()}
 			/>
 
-			{/* Player character if present */}
+			{/* Player image overlay */}
 			{player && (
 				<g transform={`translate(0, ${-TILE_HEIGHT / 4})`}>
-					<IsometricPlayer color={player.color} />
+					<image
+						href={player.imgURL}
+						width={TILE_WIDTH * 0.7}
+						height={TILE_WIDTH * 0.7}
+						x={-TILE_WIDTH * 0.3}
+						y={-TILE_WIDTH * 0.3}
+						preserveAspectRatio="xMidYMid meet"
+					/>
 					<text
 						x="0"
 						y="-20"

@@ -79,10 +79,15 @@ const IsometricGrid = () => {
 	};
 
 	const players = [
-		{ id: "P1", color: "#FF0000", x: 5, y: 5, style: "knight" },
-		{ id: "P2", color: "#4444FF", x: 7, y: 7, style: "mage" },
-		{ id: "P3", color: "#444444", x: 3, y: 8, style: "ninja" },
-		{ id: "P4", color: "#00FF00", x: 9, y: 4, style: "robot" },
+		{ id: "P1", imgURL: "src/assets/chamica.png", x: 5, y: 5 },
+		{ id: "P2", imgURL: "src/assets/chicken.png", x: 10, y: 5 },
+		{ id: "P3", imgURL: "src/assets/turtle.png", x: 14, y: 13 },
+		{ id: "P4", imgURL: "src/assets/mammoth.png", x: 2, y: 6 },
+		{ id: "P5", imgURL: "src/assets/orda.png", x: 3, y: 12 },
+		{ id: "P6", imgURL: "src/assets/giraffe.png", x: 12, y: 3 },
+		{ id: "P7", imgURL: "src/assets/simbaza.png", x: 7, y: 8 },
+		{ id: "P8", imgURL: "src/assets/unicorn.png", x: 8, y: 14 },
+		{ id: "P9", imgURL: "src/assets/zebra.png", x: 3, y: 2 },
 	];
 
 	const viewBoxSize = 16 * (TILE_WIDTH + 10);

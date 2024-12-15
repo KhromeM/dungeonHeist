@@ -3,17 +3,18 @@ import { useState, useRef, useEffect } from "react";
 import Tile from "./Tile";
 
 const TILE_WIDTH = 60;
+const INITIAL_ZOOM = 4;
 
 const IsometricGrid = () => {
-	const [zoom, setZoom] = useState(0.5);
+	const [zoom, setZoom] = useState(INITIAL_ZOOM);
 	const [hoveredTiles, setHoveredTiles] = useState(new Set());
+	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const containerRef = useRef(null);
-
+	console.log(zoom);
 	const handleTileHover = (x, y, isHovered) => {
 		setHoveredTiles((prev) => {
 			const next = new Set(prev);
 			if (isHovered) {
-				// Add adjacent tiles
 				next.add(`${x},${y}`);
 				next.add(`${x + 1},${y}`);
 				next.add(`${x - 1},${y}`);
@@ -31,7 +32,7 @@ const IsometricGrid = () => {
 		const handleWheel = (e) => {
 			e.preventDefault();
 			const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-			setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 0.2), 3));
+			setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 0.8), 6));
 		};
 
 		if (element) {
@@ -39,6 +40,19 @@ const IsometricGrid = () => {
 			return () => element.removeEventListener("wheel", handleWheel);
 		}
 	}, []);
+
+	const handleZoomIn = () => {
+		setZoom((prev) => Math.min(prev * 1.2, 6));
+	};
+
+	const handleZoomOut = () => {
+		setZoom((prev) => Math.max(prev * 0.8, 0.5));
+	};
+
+	const handleReset = () => {
+		setZoom(INITIAL_ZOOM);
+		setPosition({ x: 0, y: 0 });
+	};
 
 	const generateTerrain = () => {
 		const tiles = [];
@@ -93,40 +107,75 @@ const IsometricGrid = () => {
 	const viewBoxSize = 16 * (TILE_WIDTH + 10);
 
 	return (
-		<div className="w-full h-screen bg-gray-900" ref={containerRef}>
-			<motion.div
-				drag
-				dragMomentum={false}
-				className="w-full h-full"
-				style={{
-					scale: zoom,
-					transition: "scale 0.2s ease-out",
-				}}
+		<div className="h-full w-full flex flex-col overflow-hidden">
+			{/* Game area */}
+			<div
+				className="flex-1 bg-gray-900 relative overflow-hidden"
+				ref={containerRef}
 			>
-				<svg
-					width="100%"
-					height="100%"
-					viewBox={`${-viewBoxSize / 2} ${
-						-viewBoxSize / 2
-					} ${viewBoxSize} ${viewBoxSize}`}
-					preserveAspectRatio="xMidYMid meet"
+				<div className="absolute inset-0 flex items-center justify-center">
+					<motion.div
+						drag
+						dragMomentum={false}
+						animate={position}
+						className="touch-none"
+						style={{
+							scale: zoom,
+							transition: "scale 0.2s ease-out",
+							maxWidth: "fit-content",
+							marginLeft: "auto",
+							marginRight: "auto",
+						}}
+					>
+						<svg
+							height="800px"
+							viewBox={`${-viewBoxSize / 2} ${
+								-viewBoxSize / 2
+							} ${viewBoxSize} ${viewBoxSize}`}
+							preserveAspectRatio="xMidYMid meet"
+						>
+							{generateTerrain().map((tile) => {
+								const player = players.find(
+									(p) => p.x === tile.x && p.y === tile.y
+								);
+								return (
+									<Tile
+										key={`${tile.x}-${tile.y}`}
+										{...tile}
+										player={player}
+										isSelected={hoveredTiles.has(`${tile.x},${tile.y}`)}
+										onHover={handleTileHover}
+									/>
+								);
+							})}
+						</svg>
+					</motion.div>
+				</div>
+			</div>
+
+			{/* Control bar */}
+			<div className="h-16 bg-gray-800 flex items-center justify-center gap-4 px-4 shrink-0">
+				<div className="flex gap-2">
+					<button
+						onClick={handleZoomOut}
+						className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded"
+					>
+						-
+					</button>
+					<button
+						onClick={handleZoomIn}
+						className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded"
+					>
+						+
+					</button>
+				</div>
+				<button
+					onClick={handleReset}
+					className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
 				>
-					{generateTerrain().map((tile) => {
-						const player = players.find(
-							(p) => p.x === tile.x && p.y === tile.y
-						);
-						return (
-							<Tile
-								key={`${tile.x}-${tile.y}`}
-								{...tile}
-								player={player}
-								isSelected={hoveredTiles.has(`${tile.x},${tile.y}`)}
-								onHover={handleTileHover}
-							/>
-						);
-					})}
-				</svg>
-			</motion.div>
+					Reset View
+				</button>
+			</div>
 		</div>
 	);
 };

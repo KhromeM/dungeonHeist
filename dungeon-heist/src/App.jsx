@@ -2,9 +2,9 @@ import IsometricGrid from "./components/IsometricGrid";
 
 const App = () => {
 	return (
-		// <IsometricGrid width={8} height={8} tileTypes={tileTypes} tiles={tiles} />
-		<IsometricGrid />
+		<div className="w-screen h-screen overflow-hidden">
+			<IsometricGrid />
+		</div>
 	);
 };
-
 export default App;

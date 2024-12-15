@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Tile from "./Tile";
 
 const TILE_WIDTH = 60;
-const INITIAL_ZOOM = 4;
+const INITIAL_ZOOM = 3;
 
 const IsometricGrid = () => {
 	const [zoom, setZoom] = useState(INITIAL_ZOOM);
@@ -32,7 +32,7 @@ const IsometricGrid = () => {
 		const handleWheel = (e) => {
 			e.preventDefault();
 			const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-			setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 0.8), 6));
+			setZoom((prev) => Math.min(Math.max(prev * zoomFactor, 1), 6));
 		};
 
 		if (element) {
@@ -113,22 +113,20 @@ const IsometricGrid = () => {
 				className="flex-1 bg-gray-900 relative overflow-hidden"
 				ref={containerRef}
 			>
-				<div className="absolute inset-0 flex items-center justify-center">
+				<div className="flex-1 bg-gray-900 relative" ref={containerRef}>
 					<motion.div
 						drag
 						dragMomentum={false}
 						animate={position}
-						className="touch-none"
+						className="touch-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 						style={{
 							scale: zoom,
 							transition: "scale 0.2s ease-out",
-							maxWidth: "fit-content",
-							marginLeft: "auto",
-							marginRight: "auto",
 						}}
 					>
 						<svg
-							height="800px"
+							height="600px"
+							width="auto"
 							viewBox={`${-viewBoxSize / 2} ${
 								-viewBoxSize / 2
 							} ${viewBoxSize} ${viewBoxSize}`}

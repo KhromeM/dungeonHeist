@@ -1,215 +1,291 @@
-# Blockchain Dungeon Crawler - Technical Design Document
+# DungeonHeist
 
-## System Architecture Overview
+## Game Concept
 
-### Components
+DungeonHeist is a Polytopia-style blockchain game that combines strategy, social engineering, and risk-reward mechanics. Players navigate a dungeon to reach treasure chests protected by powerful AI-controlled guards. Rather than engaging in direct combat (where guards are overwhelmingly powerful), players must use cunning and deception through a messaging system to distract or manipulate guards.
 
-1. Smart Contract (Ethereum Base Chain)
-2. Backend Server (Node.js)
-3. Frontend (React)
-4. Marketing
-5. Story and lore (if its just a shitty game then who cares)
+### Core Mechanics
 
-## Smart Contract Design
+- **Economic Loop**: Each player action (movement/message) costs 0.0025 ETH
 
-### State Management
+  - 80% of fees are added to treasure chests
+  - 20% goes to development wallet
+  - Failed attempts increase the reward pool, making successful heists more valuable
 
-- Stores current game state of all entities (approximately 20 total)
-- Only authorized backend can update full state
-- Players can only emit action messages
+- **Guard System**:
 
-### Entity Structure
+  - AI-controlled guards protect treasure
+  - Overpowered in direct combat
+  - Can be messaged and potentially deceived
+  - Natural language interaction system
+  - Dynamic patrol and response behaviors
+
+- **Risk vs Reward**:
+  - Treasure value increases over time from accumulated fees
+  - Players must balance action costs against potential rewards
+  - Strategic decision-making between stealth, deception, and direct approaches
+
+## Technical Architecture
+
+### Smart Contract Layer
+
+- **Contract Name**: DungeonGame
+- **Network**: Base Sepolia
+- **Core Features**:
+  - Entity-based state management (Players, Guards, Chests, Weapons)
+  - Action message system with 0.0025 ETH fee per action
+  - Automatic fee distribution (80% to treasure chests, 20% to dev wallet)
+  - Turn-based state processing
+  - Secure withdrawal mechanisms
+  - Reentrancy protection
+
+#### Entity Structure
 
 ```solidity
 struct Entity {
-    uint8 entityType;    // player/guard/chest/weapon
-    uint8 x;            // position 0-9
-    uint8 y;            // position 0-9
-    uint8 weapon;       // weapon type enum
-    uint8 status;       // status enum
-    uint8 hp;          // health points
-    uint256 money;     // ETH stored (in wei)
-    string name;       // entity name
+    EntityType entityType;  // Player, Guard, Chest, Weapon
+    uint8 x;               // Position X (0-15)
+    uint8 y;               // Position Y (0-15)
+    uint8 weapon;          // Weapon type
+    Status status;         // Default, Walking, Chatting, Attacking
+    uint16 hp;            // Health points
+    uint256 money;        // ETH balance
+    string name;          // Entity identifier
 }
 ```
 
-### Core Functions
+### Backend Server
 
-1. Message Emission
+#### Core Services
 
-   - Cost: 0.0025 ETH per message
-   - Types: Movement, Chat, Combat
-   - Emitted as blockchain events
+1. **GameStateManager**
 
-2. Turn Processing
+   - Maintains current game state
+   - Caches entity positions and states
+   - Manages turn timers (5-minute cycles)
+   - Tracks unprocessed events
 
-   - Toggle between active/processing states
-   - Emit turn processing event
-   - Accept state updates from backend
+2. **TurnProcessor**
 
-3. Player Registration
-   - Accept join fee (0.0025 ETH)
-   - Emit join event
-   - Backend assigns starting position
+   - Handles turn transitions
+   - Processes accumulated actions
+   - Updates global game state
+   - Manages state synchronization
 
-### Fee Distribution
+3. **WebSocketManager**
 
-- 80% to treasure chests
-- 20% to dev wallet
-- Automatic distribution on message processing
+   - Real-time client communication
+   - State broadcast system
+   - Connection management
 
-## Backend Server Design
+4. **Guard AI Service** (Pending Implementation)
 
-### Core Services
+   - Natural language processing for player messages
+   - Guard behavior and response system
+   - Patrol pattern management
+   - Threat assessment and response
+   - Memory of player interactions
 
-1. Game State Manager
+5. **Economic System**
+   - Fee collection and distribution
+   - Treasure chest value calculation
+   - Reward pool management
+   - Successful heist processing
 
-   - Reads blockchain events
-   - Processes game logic
-   - Updates contract state
-   - Maintains turn timer
+#### API Endpoints
 
-2. Action Processor
+1. **Admin Endpoints** (`/api/admin/`)
 
-   - Collects actions from blockchain events
-   - Validates moves
-   - Resolves conflicts
-   - Updates positions and stats
+   - Game state control
+   - Processing management
+   - Withdrawal handling
+   - Event monitoring
 
-3. Guard AI Service
+2. **Game Endpoints** (`/game`)
+   - WebSocket connections
+   - State queries
+   - Event tracking
 
-   - Manages guard behaviors
-   - Processes natural language interactions
-   - Determines guard responses and actions
-   - Updates guard positions and states
+### Frontend Implementation
 
-4. Combat Resolution Service
+**Technology Stack**:
 
-   - Processes player vs player combat
-   - Processes player vs guard combat
-   - Handles loot distribution
-   - Updates entity stats
-
-5. Payment Processor
-   - Records successful escapes
-   - Manages payout database
-   - Interfaces with manual payout system
-
-### Game Loop
-
-1. Continuous 5-minute cycles
-2. Process all actions at turn end
-3. Update contract state
-4. Reset for next turn
-
-## Frontend Design
-
-### Core Components
-
-1. Game Map Display
-
-   - Simple 2D grid initially
-   - Click tiles for entity information
-   - Basic entity representations
-
-2. Action Interface
-
-   - Bottom bar for game controls
-   - RainbowKit wallet integration
-   - Action input system
-
-3. Game State Display
-   - Turn timer
-   - Player inventory/stats
-   - Entity information
-   - Chat interface
-
-### Data Flow
-
-1. Contract events -> Backend API -> Frontend
-2. Player actions -> Contract -> Backend
-3. Regular state updates from Backend API
-
-## Database Design
-
-### Payment Processing
-
-```
-Table: Payouts
-- player_address: address
-- amount: uint256
-- timestamp: uint256
-- processed: boolean
-- transaction_hash: string
-```
-
-## Future Enhancements
-
-1. Isometric map (Polytopia style)
-2. Enhanced guard personalities
-3. Advanced combat system
-4. Improved visualizations
-5. Equipment system expansion
-
-## Technical Requirements
-
-### Smart Contract
-
-- Solidity ^0.8.0
-- OpenZeppelin contracts for security
-- Gas optimization for bulk updates
-
-### Backend
-
-- Node.js
-- Web3.js for blockchain interaction
-- Express for API
-- GPT integration for guard AI
-
-### Frontend
-
+- Vite
 - React
-- RainbowKit
-- Ethers.js
-- TypeScript
+- TailwindCSS
+- Framer Motion
 
-## Security Considerations
+#### Core Components
 
-1. Smart Contract
+1. **IsometricGrid**
 
-   - Single update authority
-   - Rate limiting
-   - Fee validation
-   - Reentrancy protection
+   - ✅ Dynamic tile rendering
+   - ✅ Camera controls (zoom/pan)
+   - ✅ Mouse interaction
+   - ✅ Terrain variety
+   - ⚠️ Pending: Movement controls
+   - ⚠️ Pending: Action system
 
-2. Backend
+2. **Tile System**
 
-   - Private key security
-   - Rate limiting
-   - Input validation
-   - Error handling
+   - ✅ Multiple terrain types
+   - ✅ 3D isometric perspective
+   - ✅ Interactive hover effects
+   - ✅ Depth visualization
+   - ⚠️ Pending: Pathfinding overlay
 
-3. Frontend
-   - Transaction confirmation
-   - Error handling
-   - Wallet connection security
+3. **Character System**
+   - ✅ Multiple character sprites
+   - ✅ Position rendering
+   - ✅ Basic animations
+   - ⚠️ Pending: Movement animations
+   - ⚠️ Pending: Action visualizations
 
-## Development Phases
+## Current Progress
 
-### Phase 1: Core Infrastructure
+### Completed Features
 
-1. Basic smart contract
-2. Simple backend processing
-3. Minimal frontend
+1. **Smart Contract**
+
+   - Base game mechanics
+   - State management
+   - Fee system
+   - Security measures
+
+2. **Backend**
+
+   - Server infrastructure
+   - WebSocket setup
+   - Game state management
+   - Turn processing system
+   - Admin controls
+
+3. **Frontend**
+   - Isometric game board
+   - Terrain visualization
+   - Character rendering
+   - Camera controls
+   - Basic interactions
+
+### Pending Implementation
+
+1. **Smart Contract**
+
+   - Enhanced game mechanics
+   - Additional entity types
+   - Optimized gas usage
+   - Emergency pause system
+
+2. **Backend**
+
+   - Combat resolution
+   - Guard AI system
+   - Enhanced game logic
+   - State persistence
+   - Advanced error handling
+
+3. **Frontend**
+   - Wallet connection
+   - Backend integration
+   - Game controls UI
+   - Action system
+   - Chat interface
+   - Status displays
+
+## Game Design Notes
+
+### Guard Behavior
+
+- Guards maintain memory of player interactions
+- Each guard has unique personality traits
+- Natural language processing for varied responses
+- Dynamic patrol patterns based on threat assessment
+- Ability to coordinate with other guards
+
+### Player Strategy Options
+
+1. **Stealth**: Avoid guard detection
+2. **Deception**: Mislead guards through messaging
+3. **Distraction**: Create diversions
+4. **Cooperation**: Work with other players
+5. **Direct Approach**: High risk, requires significant resources
+
+### Economic Balance
+
+- Initial chest values set to encourage participation
+- Fee structure designed to grow reward pool over time
+- Guard difficulty balanced against potential rewards
+- Cost of actions vs. potential returns
+- Anti-exploit mechanisms
+
+## Development Roadmap
+
+### Phase 1: Core Integration (Current)
+
+1. Connect frontend to backend WebSocket
+2. Implement wallet connection
+3. Add basic game controls
+4. Create game status UI
 
 ### Phase 2: Game Mechanics
 
-1. Guard AI implementation
-2. Combat system
-3. Enhanced frontend
+1. Implement guard AI and messaging system
+2. Create patrol and detection mechanics
+3. Develop natural language interaction system
+4. Implement treasure chest mechanics
+5. Add combat system
 
-### Phase 3: Polish
+### Phase 3: Enhancement
 
-1. Visual improvements
-2. UX enhancements
-3. Performance optimization
+1. Improve guard AI behaviors
+2. Add guard personality variations
+3. Enhance messaging system
+4. Implement guard memory and learning
+5. Add advanced patrol patterns
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js v16+
+- npm or yarn
+- Base Chain RPC access
+- Wallet with test ETH
+
+### Installation
+
+```bash
+# Clone repository
+git clone [repository-url]
+
+# Install dependencies
+cd dungeonHeist
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Start development server
+npm run dev
+```
+
+## Technical Notes
+
+### Contract Interaction
+
+- Contract Address: [Base Sepolia Contract Address]
+- Required Fee: 0.0025 ETH per action
+- Event System: PlayerMessage, TurnProcessing, GameStateUpdated events
+
+### State Management
+
+- Turn Duration: 5 minutes
+- Max Players: 10
+- Grid Size: 16x16
+- Entity Limit: ~20 total entities
+
+### Security Considerations
+
+- Make sure the backend is secure
+- Transaction validation

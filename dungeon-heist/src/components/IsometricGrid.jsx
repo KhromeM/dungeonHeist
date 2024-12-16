@@ -126,7 +126,7 @@ const IsometricGrid = () => {
 					>
 						<svg
 							height="600px"
-							width="auto"
+							width="100%"
 							viewBox={`${-viewBoxSize / 2} ${
 								-viewBoxSize / 2
 							} ${viewBoxSize} ${viewBoxSize}`}

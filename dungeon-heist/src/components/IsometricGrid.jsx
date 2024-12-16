@@ -154,7 +154,7 @@ const generateTerrain = (walls) => {
         terrainType = "WALL";
       } else {
         if (x + y > 24) {
-          terrainType = "DEEP_WATER";
+          terrainType = "SHALLOW_WATER";
         } else if (x + y > 22) {
           terrainType = "SHALLOW_WATER";
         } else if (x + y > 20) {
@@ -163,13 +163,11 @@ const generateTerrain = (walls) => {
 
         if (x < 5 && y < 5) {
           terrainType = "MOUNTAIN";
-        } else if ((x === 7 || x === 8) && (y === 7 || y === 8)) {
-          terrainType = "HILL";
-        }
+        } 
 
         if (x > 12 && y < 3) {
           terrainType = "SNOW";
-        } else if (x > 8 && x < 12 && y > 2 && y < 6) {
+        } else if (x > 6 && x < 13 && y > 2 && y < 6) {
           terrainType = "FOREST";
         }
       }

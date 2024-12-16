@@ -1,22 +1,22 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+/node_modules
 # dependencies
-/frontend/node_modules
-/frontend/.pnp
-/frontend.pnp.js
+/dungeon-heist/node_modules
+/dungeon-heist/.pnp
+/dungeon-heist.pnp.js
 
 # testing
-/frontend/coverage
+/dungeon-heist/coverage
 
 # production
-/frontend/build
+/dungeon-heist/build
 
 # misc
-/frontend.DS_Store
-/frontend.env.local
-/frontend.env.development.local
-/frontend.env.test.local
-/frontend.env.production.local
+/dungeon-heist.DS_Store
+/dungeon-heist.env.local
+/dungeon-heist.env.development.local
+/dungeon-heist.env.test.local
+/dungeon-heist.env.production.local
 
 
 **/.env

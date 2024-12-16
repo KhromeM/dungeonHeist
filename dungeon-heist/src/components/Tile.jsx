@@ -62,6 +62,13 @@ const TERRAIN_TYPES = {
 		heightMod: 1.3,
 		name: "Forest",
 	},
+	WALL: {
+		top: "#A9A9A9", 
+		right: "#8E8E8E",
+		left: "#7F7F7F",
+		heightMod: 2,
+		name: "Wall",
+	},
 };
 
 const toIso = (x, y) => ({

@@ -93,15 +93,15 @@ const IsometricGrid = () => {
 	};
 
 	const players = [
-		{ id: "P1", imgURL: "src/assets/chamica.png", x: 5, y: 5 },
-		{ id: "P2", imgURL: "src/assets/chicken.png", x: 10, y: 5 },
-		{ id: "P3", imgURL: "src/assets/turtle.png", x: 14, y: 13 },
-		{ id: "P4", imgURL: "src/assets/mammoth.png", x: 2, y: 6 },
-		{ id: "P5", imgURL: "src/assets/orda.png", x: 3, y: 12 },
-		{ id: "P6", imgURL: "src/assets/giraffe.png", x: 12, y: 3 },
-		{ id: "P7", imgURL: "src/assets/simbaza.png", x: 7, y: 8 },
-		{ id: "P8", imgURL: "src/assets/unicorn.png", x: 8, y: 14 },
-		{ id: "P9", imgURL: "src/assets/zebra.png", x: 3, y: 2 },
+		{ id: "P1", imgURL: "/assets/chamica.png", x: 5, y: 5 },
+		{ id: "P2", imgURL: "/assets/chicken.png", x: 10, y: 5 },
+		{ id: "P3", imgURL: "/assets/turtle.png", x: 14, y: 13 },
+		{ id: "P4", imgURL: "/assets/mammoth.png", x: 2, y: 6 },
+		{ id: "P5", imgURL: "/assets/orda.png", x: 3, y: 12 },
+		{ id: "P6", imgURL: "/assets/giraffe.png", x: 12, y: 3 },
+		{ id: "P7", imgURL: "/assets/simbaza.png", x: 7, y: 8 },
+		{ id: "P8", imgURL: "/assets/unicorn.png", x: 8, y: 14 },
+		{ id: "P9", imgURL: "/assets/zebra.png", x: 3, y: 2 },
 	];
 
 	const viewBoxSize = 16 * (TILE_WIDTH + 10);
@@ -149,30 +149,6 @@ const IsometricGrid = () => {
 						</svg>
 					</motion.div>
 				</div>
-			</div>
-
-			{/* Control bar */}
-			<div className="h-16 bg-gray-800 flex items-center justify-center gap-4 px-4 shrink-0">
-				<div className="flex gap-2">
-					<button
-						onClick={handleZoomOut}
-						className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded"
-					>
-						-
-					</button>
-					<button
-						onClick={handleZoomIn}
-						className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded"
-					>
-						+
-					</button>
-				</div>
-				<button
-					onClick={handleReset}
-					className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded"
-				>
-					Reset View
-				</button>
 			</div>
 		</div>
 	);

@@ -1,0 +1,70 @@
+.navbar {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1000;
+	background: rgba(0, 0, 0, 0.7);
+	backdrop-filter: blur(8px);
+	padding: 12px 32px;
+	border-radius: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	min-width: 80%;
+	max-width: 95%;
+	width: auto;
+}
+
+.navbar-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	gap: 24px;
+}
+
+.game-name {
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #fff;
+	white-space: nowrap;
+}
+
+.google-login {
+	background-color: #4285f4;
+	color: #fff;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.google-login:hover {
+	background-color: #3367d6;
+}
+
+@media (max-width: 640px) {
+	.navbar {
+		min-width: 90%;
+		padding: 8px 16px;
+	}
+
+	.game-name {
+		font-size: 1em;
+	}
+
+	.google-login {
+		padding: 6px 12px;
+		font-size: 0.9em;
+	}
+}
+
+@media (min-width: 1024px) {
+	.navbar {
+		min-width: 600px;
+		padding: 16px 48px;
+	}
+}

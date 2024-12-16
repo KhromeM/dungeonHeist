@@ -1,0 +1,208 @@
+.bottom-action-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 16px 24px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 76px;
+  backdrop-filter: blur(8px);
+  max-width: 90%;
+}
+
+.controls-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.action-btn {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a1a;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 20px;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.action-btn.active {
+  background-color: #404040;
+  box-shadow: 0 0 0 2px #6d6d6d;
+  transform: scale(1.05);
+}
+
+.action-btn:hover {
+  background-color: #2a2a2a;
+}
+
+.directional-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  gap: 4px;
+  margin-right: 12px;
+}
+
+.direction-btn {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a1a;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 20px;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.direction-btn:hover {
+  background-color: #2a2a2a;
+}
+
+.target-select {
+  background-color: #1a1a1a;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px;
+  min-width: 140px;
+  height: 48px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin: 0 12px;
+}
+
+.target-select:hover {
+  background-color: #2a2a2a;
+}
+
+.submit-btn {
+  background-color: #4caf50;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  padding: 8px 24px;
+  height: 48px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}
+
+.message-panel {
+  position: fixed;
+  bottom: 92px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(800px, 90%);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.message-panel.collapsed {
+  height: 40px;
+  overflow: hidden;
+}
+
+.message-panel.hidden {
+  display: none;
+}
+
+.message-panel textarea {
+  width: 100%;
+  min-height: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  padding: 12px;
+  font-size: 16px;
+  resize: vertical;
+  margin-bottom: 12px;
+  font-family: monospace;
+}
+
+.message-panel textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.message-header {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.toggle-panel-btn {
+  background: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-panel-btn:hover {
+  background-color: #444;
+}
+
+@media (max-width: 640px) {
+  .bottom-action-bar {
+    width: calc(100% - 32px);
+    padding: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .directional-controls {
+    order: 1;
+    margin-right: 0;
+  }
+  
+  .controls-group {
+    order: 2;
+  }
+  
+  .target-select {
+    order: 3;
+    flex: 1;
+    min-width: 120px;
+    margin: 0;
+  }
+  
+  .submit-btn {
+    order: 4;
+  }
+
+  .message-panel {
+    bottom: 180px;
+  }
+}

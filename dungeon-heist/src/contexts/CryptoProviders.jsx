@@ -6,7 +6,7 @@ import { config } from "../wagmi";
 // Create a client
 const queryClient = new QueryClient();
 
-export function Providers({ children }) {
+export function CryptoProviders({ children }) {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<WagmiConfig config={config}>

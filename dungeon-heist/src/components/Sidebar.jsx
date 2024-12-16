@@ -1,34 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import '../index.css';
+import React, { useState, useEffect } from "react";
+import "../index.css";
 
 const Sidebar = () => {
-  const [time, setTime] = useState(300); // Start with 5 minutes (300 seconds)
+	const [time, setTime] = useState(300);
+	const [isCollapsed, setIsCollapsed] = useState(true);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTime((prevTime) => {
-        if (prevTime === 0) {
-          return 300; // Restart timer at 5 minutes
-        }
-        return prevTime - 1; // Decrement the timer by 1 second
-      });
-    }, 1000); // Update every second
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			setTime((prevTime) => {
+				if (prevTime === 0) {
+					return 300;
+				}
+				return prevTime - 1;
+			});
+		}, 1000);
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, []);
+		return () => clearInterval(intervalId);
+	}, []);
 
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`; // Correct template literal
-  };
+	const formatTime = (seconds) => {
+		const minutes = Math.floor(seconds / 60);
+		const remainingSeconds = seconds % 60;
+		return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+	};
 
-  return (
-    <div className="absolute top-1/2 right-4 flex flex-col justify-start items-start bg-yellow-500 py-3 px-6 w-[50%] max-w-[400px] max-h-[40vh] h-[50vh] z-10 rounded-lg transform -translate-y-1/2">
-      <h1 className="text-6xl font-Digitalt text-white">{formatTime(time)}</h1>
-      <h1 className="text-4xl font-Digitalt text-white">ENTITY DETAILS:</h1>
-    </div>
-  );
+	return (
+		<div
+			className={`fixed top-[100px] right-4 flex flex-col items-start bg-black/85 backdrop-blur-md 
+      p-4 min-w-[200px] z-10 rounded-2xl transition-all duration-300
+      ${isCollapsed ? "w-[200px]" : "w-[400px]"}`}
+		>
+			{/* Timer and Toggle Section - Always Visible */}
+			<div className="w-full flex justify-between items-center mb-4">
+				<div className="text-4xl font-Digitalt text-white mr-4">
+					{formatTime(time)}
+				</div>
+				<button
+					onClick={() => setIsCollapsed(!isCollapsed)}
+					className="bg-[#1a1a1a] hover:bg-[#2a2a2a] text-white rounded-xl px-3 py-2 text-sm transition-colors"
+				>
+					{isCollapsed ? "►" : "◄"}
+				</button>
+			</div>
+
+			{/* Collapsible Content */}
+			<div
+				className={`w-full transition-all duration-300 overflow-hidden ${
+					isCollapsed ? "h-0" : "h-[calc(50vh-100px)]"
+				}`}
+			>
+				<h2 className="text-2xl font-Digitalt text-white mb-4">
+					ENTITY DETAILS:
+				</h2>
+				<div className="bg-[#1a1a1a] rounded-xl p-4 w-full">
+					<p className="text-white/70">No entity selected</p>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default Sidebar;

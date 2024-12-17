@@ -2,15 +2,10 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
 import "./bottombar.css";
 
-const BottomBar = ({
-	isSwordActive,
-	setIsSwordActive,
-	isMailActive,
-	setIsMailActive,
-	selectedTarget,
-	setSelectedTarget,
-	onDirectionClick,
-}) => {
+const BottomBar = ({ setPlayers }) => {
+	const [isSwordActive, setIsSwordActive] = useState(false);
+	const [isMailActive, setIsMailActive] = useState(false);
+	const [selectedTarget, setSelectedTarget] = useState("Goblin");
 	const { openConnectModal } = useConnectModal();
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [message, setMessage] = useState("");
@@ -21,10 +16,33 @@ const BottomBar = ({
 	};
 
 	const handleDirectionClick = (direction) => {
-		// Call the onDirectionClick prop passed from the parent component
-		if (onDirectionClick) {
-			onDirectionClick(direction);
-		}
+		console.log(direction);
+		// Update players state here if needed
+		setPlayers((currentPlayers) => {
+			const updatedPlayers = [...currentPlayers];
+			const playerIndex = updatedPlayers.findIndex((p) => p.id === "P1");
+			const player = updatedPlayers[playerIndex];
+
+			let newX = player.x;
+			let newY = player.y;
+			switch (direction) {
+				case "UP":
+					newX = Math.max(0, player.x - 1);
+					break;
+				case "DOWN":
+					newX = Math.min(24, player.x + 1);
+					break;
+				case "LEFT":
+					newY = Math.min(24, player.y + 1);
+					break;
+				case "RIGHT":
+					newY = Math.max(0, player.y - 1);
+					break;
+			}
+
+			updatedPlayers[playerIndex] = { ...player, x: newX, y: newY };
+			return updatedPlayers;
+		});
 	};
 
 	return (

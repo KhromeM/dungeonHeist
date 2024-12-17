@@ -6,7 +6,7 @@ import { TILE_WIDTH } from "../utils/tiles";
 
 const INITIAL_ZOOM = 3;
 
-const IsometricGrid = ({ players, setPlayers, onDirectionClick }) => {
+const IsometricGrid = ({ players }) => {
 	const [zoom, setZoom] = useState(INITIAL_ZOOM);
 	const [hoveredTiles, setHoveredTiles] = useState(new Set());
 	const [position, setPosition] = useState({ x: 0, y: 0 });

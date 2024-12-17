@@ -17,46 +17,12 @@ const App = () => {
 		{ id: "P9", imgURL: "/assets/zebra.png", x: 3, y: 2 },
 	]);
 
-	const handleDirectionClick = (direction) => {
-		console.log(direction);
-		// Update players state here if needed
-		setPlayers((currentPlayers) => {
-			const updatedPlayers = [...currentPlayers];
-			const playerIndex = updatedPlayers.findIndex((p) => p.id === "P1");
-			const player = updatedPlayers[playerIndex];
-
-			let newX = player.x;
-			let newY = player.y;
-			switch (direction) {
-				case "UP":
-					newY = Math.max(0, player.y - 1);
-					break;
-				case "DOWN":
-					newY = Math.min(15, player.y + 1);
-					break;
-				case "LEFT":
-					newX = Math.max(0, player.x - 1);
-					break;
-				case "RIGHT":
-					newX = Math.min(15, player.x + 1);
-					break;
-			}
-
-			updatedPlayers[playerIndex] = { ...player, x: newX, y: newY };
-			return updatedPlayers;
-		});
-	};
-
 	return (
 		<div className="w-screen h-screen overflow-hidden relative">
 			<Sidebar />
 			<Navbar />
-			<IsometricGrid
-				players={players}
-				setPlayers={setPlayers}
-				onDirectionClick={handleDirectionClick}
-			/>
-			<BottomBar onDirectionClick={handleDirectionClick} />
+			<IsometricGrid players={players} />
+			<BottomBar setPlayers={setPlayers} />
 		</div>
 	);
 };

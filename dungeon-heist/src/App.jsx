@@ -17,35 +17,31 @@ const App = () => {
 		{ id: "P9", imgURL: "/assets/zebra.png", x: 3, y: 2 },
 	]);
 
-	const [isSwordActive, setIsSwordActive] = useState(false);
-	const [isMailActive, setIsMailActive] = useState(false);
-	const [selectedTarget, setSelectedTarget] = useState("Goblin");
-
 	const handleDirectionClick = (direction) => {
 		console.log(direction);
 		// Update players state here if needed
-		setPlayers(currentPlayers => {
+		setPlayers((currentPlayers) => {
 			const updatedPlayers = [...currentPlayers];
-			const playerIndex = updatedPlayers.findIndex(p => p.id === "P1");
+			const playerIndex = updatedPlayers.findIndex((p) => p.id === "P1");
 			const player = updatedPlayers[playerIndex];
-			
+
 			let newX = player.x;
 			let newY = player.y;
-			switch(direction) {
-				case 'UP':
+			switch (direction) {
+				case "UP":
 					newY = Math.max(0, player.y - 1);
 					break;
-				case 'DOWN':
+				case "DOWN":
 					newY = Math.min(15, player.y + 1);
 					break;
-				case 'LEFT':
+				case "LEFT":
 					newX = Math.max(0, player.x - 1);
 					break;
-				case 'RIGHT':
+				case "RIGHT":
 					newX = Math.min(15, player.x + 1);
 					break;
 			}
-			
+
 			updatedPlayers[playerIndex] = { ...player, x: newX, y: newY };
 			return updatedPlayers;
 		});
@@ -55,20 +51,12 @@ const App = () => {
 		<div className="w-screen h-screen overflow-hidden relative">
 			<Sidebar />
 			<Navbar />
-			<IsometricGrid 
-				players={players} 
+			<IsometricGrid
+				players={players}
 				setPlayers={setPlayers}
 				onDirectionClick={handleDirectionClick}
 			/>
-			<BottomBar
-				isSwordActive={isSwordActive}
-				setIsSwordActive={setIsSwordActive}
-				isMailActive={isMailActive}
-				setIsMailActive={setIsMailActive}
-				selectedTarget={selectedTarget}
-				setSelectedTarget={setSelectedTarget}
-				onDirectionClick={handleDirectionClick}
-			/>
+			<BottomBar onDirectionClick={handleDirectionClick} />
 		</div>
 	);
 };

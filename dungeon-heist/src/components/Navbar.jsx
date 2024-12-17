@@ -1,16 +1,11 @@
 import { useAuth } from "../contexts/AuthContext";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { CustomAvatar } from "../components/CustomAvatar";
 import "./navbar.css";
-const Navbar = () => {
-	const { user, loginWithGoogle, logout } = useAuth();
 
-	const handleGoogleLogin = async () => {
-		try {
-			await loginWithGoogle();
-		} catch (error) {
-			console.error("Login failed:", error);
-			alert("Login failed. Please try again.");
-		}
-	};
+const Navbar = () => {
+	const { user, logout } = useAuth();
+	const { openConnectModal } = useConnectModal();
 
 	const handleLogout = async () => {
 		try {
@@ -27,15 +22,19 @@ const Navbar = () => {
 				<div className="game-name">DungeonHeist</div>
 				{user ? (
 					<div className="flex items-center gap-4">
-						{/* <span className="text-sm text-gray-300">{user.email}</span> */}
-						{/* Show user profile pic */}
+						<div className="flex items-center gap-2">
+							<CustomAvatar address={user.address} size={32} />
+							<span className="text-sm text-gray-300">
+								{user.address.slice(0, 2)}...{user.address.slice(-4)}
+							</span>
+						</div>
 						<button className="google-login" onClick={handleLogout}>
-							Logout
+							Disconnect
 						</button>
 					</div>
 				) : (
-					<button className="google-login" onClick={handleGoogleLogin}>
-						Login with Google
+					<button className="google-login" onClick={openConnectModal}>
+						Connect Wallet
 					</button>
 				)}
 			</div>

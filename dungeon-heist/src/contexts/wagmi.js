@@ -2,8 +2,7 @@ import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { base, baseSepolia } from "wagmi/chains";
 
 export const config = getDefaultConfig({
-	appName: "DungeonHeist",
-	projectId: "e7df0e7277ec915bd5625c2cce004386", // You may want your own project ID
+	appName: "dungeonheist",
+	projectId: "9699b74e8efc3649f2b40109faa993b8",
 	chains: [base],
-	ssr: false, // Since we're not using Next.js
 });

@@ -7,6 +7,7 @@ import mountainPNG from "../images/mountain.png";
 import shallowWaterPNG from "../images/shallowwater.png";
 import sandSVG from "../images/sand.svg";
 import wallPNG from "../images/wall.png";
+import selectedPNG from "../images/selected.png";
 
 const TILE_WIDTH = 60;
 const TILE_HEIGHT = TILE_WIDTH * 0.5;
@@ -82,6 +83,14 @@ const TERRAIN_TYPES = {
         left: "#7F7F7F",
         heightMod: 2,
         name: "Wall",
+    },
+	SELECTED: {
+        image: selectedPNG,
+        top: "#A9A9A9", 
+        right: "#8E8E8E",
+        left: "#7F7F7F",
+        heightMod: 2,
+        name: "Selected",
     },
 };
 

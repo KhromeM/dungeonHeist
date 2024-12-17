@@ -9,6 +9,7 @@ const BottomBar = ({
   setIsMailActive,
   selectedTarget,
   setSelectedTarget,
+  onDirectionClick
 }) => {
   const { openConnectModal } = useConnectModal();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -17,6 +18,13 @@ const BottomBar = ({
   const handleMessageToggle = (e) => {
     e.stopPropagation();
     setIsMailActive(prev => !prev);
+  };
+
+  const handleDirectionClick = (direction) => {
+    // Call the onDirectionClick prop passed from the parent component
+    if (onDirectionClick) {
+      onDirectionClick(direction);
+    }
   };
 
   return (
@@ -46,11 +54,23 @@ const BottomBar = ({
       <div className="bottom-action-bar">
         <div className="directional-controls">
           <div></div>
-          <button className="direction-btn">▲</button>
+          <button 
+            className="direction-btn button-up"
+            onClick={() => handleDirectionClick('UP')}
+          >▲</button>
           <div></div>
-          <button className="direction-btn">◀</button>
-          <button className="direction-btn">▼</button>
-          <button className="direction-btn">▶</button>
+          <button 
+            className="direction-btn button-left"
+            onClick={() => handleDirectionClick('LEFT')}
+          >◀</button>
+          <button 
+            className="direction-btn button-down"
+            onClick={() => handleDirectionClick('DOWN')}
+          >▼</button>
+          <button 
+            className="direction-btn button-right"
+            onClick={() => handleDirectionClick('RIGHT')}
+          >▶</button>
         </div>
 
         <div className="controls-group">

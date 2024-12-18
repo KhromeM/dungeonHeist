@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import Tile from "./Tile";
 import { cityMatrix, TILES } from "../utils/map";
-import { TILE_WIDTH } from "../utils/tiles";
+import { TILE_HEIGHT, TILE_WIDTH } from "../utils/tiles";
 
 const INITIAL_ZOOM = 3;
 
@@ -78,19 +78,38 @@ const IsometricGrid = ({ players }) => {
 						preserveAspectRatio="xMidYMid meet"
 					>
 						{terrain.map((tile) => {
+							if(["GOGOOL_DOME", "XAGI_FACTORY", "BETA_TOWER", "OPENAGI_MAIN_TOWER"].includes(tile.terrainType)){
+							console.log(`Tile at (${tile.x}, ${tile.y}): ${tile.terrainType}`);
+						}
 							const player = players.find(
 								(p) => p.x === tile.x && p.y === tile.y
 							);
 							return (
-								<Tile
-									key={`${tile.x}-${tile.y}`}
-									{...tile}
-									player={player}
-									isSelected={hoveredTiles.has(`${tile.x},${tile.y}`)}
-									onHover={handleTileHover}
-								/>
+								<g transform={`translate(0, ${-TILE_HEIGHT / 4})`}>
+									{/* Render the Tile */}
+									<Tile
+										{...tile}
+										player={player}
+										isSelected={hoveredTiles.has(`${tile.x},${tile.y}`)}
+										onHover={handleTileHover}
+									/>
+									{/* Add Labels for Specific Tile Types */}
+									{["GOGOOL_DOME", "XAGI_FACTORY", "BETA_TOWER", "OPENAGI_MAIN_TOWER"].includes(tile.terrainType) && (
+										<text
+										x="0"
+										y="-20"
+										textAnchor="middle"
+										fill="white"
+										fontSize="12"
+										style={{ pointerEvents: "none" }}
+									>
+											{tile.terrainType}
+										</text>
+									)}
+								</g>
 							);
 						})}
+
 					</svg>
 				</motion.div>
 			</div>

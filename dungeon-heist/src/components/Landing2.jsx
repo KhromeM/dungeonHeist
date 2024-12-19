@@ -89,19 +89,20 @@ export default function Landing2() {
 	const [rows, setRows] = useState(20);
 	const [cols, setCols] = useState(40);
 	const [tileSize, setTileSize] = useState(20);
+	const [revealedCount, setRevealedCount] = useState(0);
+	const [messageIndices, setMessageIndices] = useState([]);
 
 	useEffect(() => {
 		const handleResize = () => {
 			const width = window.innerWidth;
 			const height = window.innerHeight;
-			// Calculate tileSize as width * 0.025
 			let newTileSize;
 			if (width < 600) {
-				newTileSize = width * 0.075; // fewer chars per line
+				newTileSize = width * 0.075;
 			} else if (width < 1200) {
-				newTileSize = width * 0.04; // medium
+				newTileSize = width * 0.04;
 			} else {
-				newTileSize = width * 0.025; // more chars per line
+				newTileSize = width * 0.025;
 			}
 			const newCols = Math.max(1, Math.ceil(width / newTileSize));
 			const newRows = Math.max(1, Math.ceil(height / newTileSize));
@@ -124,19 +125,26 @@ export default function Landing2() {
 			const initialTiles = Array.from({ length: total }, (_, index) => {
 				const messageChar = messageTilesMap.get(index);
 				return {
-					char:
-						messageChar ||
-						CHAR_SET.charAt(Math.floor(Math.random() * CHAR_SET.length)),
+					char: CHAR_SET.charAt(Math.floor(Math.random() * CHAR_SET.length)),
 					isMessage: Boolean(messageChar),
+					isShown: false,
+					messageChar: messageChar || null,
 				};
 			});
-
 			setTiles(initialTiles);
+
+			const msgIndices = initialTiles.reduce((arr, tile, idx) => {
+				if (tile.isMessage) arr.push(idx);
+				return arr;
+			}, []);
+			setMessageIndices(msgIndices);
+
+			setRevealedCount(0);
 		}
 	}, [rows, cols]);
 
 	useEffect(() => {
-		const interval = setInterval(() => {
+		const randomizeInterval = setInterval(() => {
 			setTiles((prev) => {
 				if (!prev.length) return prev;
 				const newTiles = [...prev];
@@ -144,7 +152,10 @@ export default function Landing2() {
 				const count = Math.floor(total * 0.1);
 				for (let i = 0; i < count; i++) {
 					const idx = Math.floor(Math.random() * total);
-					if (!newTiles[idx].isMessage) {
+					if (
+						!newTiles[idx].isMessage ||
+						(newTiles[idx].isMessage && !newTiles[idx].isShown)
+					) {
 						newTiles[idx] = {
 							...newTiles[idx],
 							char: CHAR_SET.charAt(
@@ -157,8 +168,30 @@ export default function Landing2() {
 			});
 		}, 500);
 
-		return () => clearInterval(interval);
+		return () => clearInterval(randomizeInterval);
 	}, []);
+
+	// Reveal message chars gradually using messageIndices
+	useEffect(() => {
+		if (tiles.length === 0 || messageIndices.length === 0) return;
+		const totalMessageChars = messageIndices.length;
+		if (revealedCount < totalMessageChars) {
+			const revealTimer = setTimeout(() => {
+				setTiles((prev) => {
+					const newTiles = [...prev];
+					const nextIndex = messageIndices[revealedCount];
+					newTiles[nextIndex] = {
+						...newTiles[nextIndex],
+						char: newTiles[nextIndex].messageChar,
+						isShown: true,
+					};
+					return newTiles;
+				});
+				setRevealedCount((c) => c + 1);
+			}, Math.random() * 250);
+			return () => clearTimeout(revealTimer);
+		}
+	}, [tiles, messageIndices, revealedCount]);
 
 	return (
 		<div
@@ -169,7 +202,7 @@ export default function Landing2() {
 				height: `${rows * tileSize}px`,
 				width: `${cols * tileSize}px`,
 				overflow: "hidden",
-				margin: "0 auto", // center horizontally if there's extra space
+				margin: "0 auto",
 			}}
 		>
 			{tiles.map((tile, i) => (
@@ -177,6 +210,7 @@ export default function Landing2() {
 					key={i}
 					char={tile.char}
 					isMessage={tile.isMessage}
+					isShown={tile.isShown}
 					tileSize={tileSize}
 				/>
 			))}
@@ -184,7 +218,7 @@ export default function Landing2() {
 	);
 }
 
-const Tile = ({ char, isMessage, tileSize }) => {
+const Tile = ({ char, isMessage, isShown, tileSize }) => {
 	const [isHovered, setIsHovered] = useState(false);
 
 	const primaryStyle = {
@@ -199,13 +233,18 @@ const Tile = ({ char, isMessage, tileSize }) => {
 		fontSize: "40px",
 	};
 
-	const toggle = Number(isMessage) + Number(isHovered);
+	// If tile is message but not shown yet, show normal styling (like a non-message tile).
+	// Toggle styling only if message is shown or hovered.
+	const toggle = isMessage && isShown ? 1 : 0;
+	const hoverToggle = isHovered ? 1 : 0;
+	const styleType = (toggle + hoverToggle) % 2 ? secondaryStyle : primaryStyle;
+
 	const style = {
 		fontFamily: "PPMondwest, monospace",
 		fontSize: "24px",
 		padding: "2px",
 		lineHeight: 1,
-		...(toggle % 2 ? secondaryStyle : primaryStyle),
+		...styleType,
 		whiteSpace: "nowrap",
 		overflow: "hidden",
 		textOverflow: "ellipsis",

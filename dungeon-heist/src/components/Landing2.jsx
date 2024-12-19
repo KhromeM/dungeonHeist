@@ -1,34 +1,55 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 const CHAR_SET =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:'\",.<>/?~";
 const MESSAGE = "The future requires your assistance\n\n\n-The Basilisk";
+let messageTileSize = 50;
+let charSize = 24;
+let hoverCharSize = 42;
+
+const calculateMessageTiles = (rows, cols, lines) => {
+	const longestLine = lines.reduce(
+		(max, line) => Math.max(max, line.length),
+		0
+	);
+	const startRow = Math.floor(rows / 2) - Math.floor(lines.length / 2);
+	const startCol = Math.floor(cols / 2) - Math.floor(longestLine / 2);
+
+	const messageTilesMap = new Map();
+
+	lines.forEach((line, lineIndex) => {
+		const currentRow = startRow + lineIndex;
+		[...line].forEach((char, charIndex) => {
+			const currentCol = startCol + charIndex;
+			if (
+				currentRow >= 0 &&
+				currentRow < rows &&
+				currentCol >= 0 &&
+				currentCol < cols
+			) {
+				const index = currentRow * cols + currentCol;
+				messageTilesMap.set(index, char);
+			}
+		});
+	});
+
+	return messageTilesMap;
+};
 
 export default function Landing2() {
 	const [tiles, setTiles] = useState([]);
 	const [rows, setRows] = useState(20);
 	const [cols, setCols] = useState(40);
-	const [messageTiles, setMessageTiles] = useState([]);
-	const [messageIndex, setMessageIndex] = useState(0);
-	const [hoveredIndex, setHoveredIndex] = useState(null);
-	const typewriterRef = useRef(null);
-	const intervalRef = useRef(null);
-
 	const lines = MESSAGE.split("\n");
-	const longestLine = lines.reduce(
-		(max, line) => Math.max(max, line.length),
-		0
-	);
-	const messageChars = MESSAGE.split("");
 
 	// Adjust rows/cols on resize
 	useEffect(() => {
 		const handleResize = () => {
 			const width = window.innerWidth;
 			const height = window.innerHeight;
-			const tileSize = 50;
-			const newCols = Math.max(1, Math.floor(width / tileSize));
-			const newRows = Math.max(1, Math.floor(height / tileSize));
+			const messageTileSize = width * 0.025;
+			const newCols = 40;
+			const newRows = Math.max(1, Math.floor(height / messageTileSize));
 			setRows(newRows);
 			setCols(newCols);
 		};
@@ -38,27 +59,39 @@ export default function Landing2() {
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
-	// Initialize tiles
+	// Initialize tiles with message
 	useEffect(() => {
 		if (rows > 0 && cols > 0) {
+			const messageTilesMap = calculateMessageTiles(rows, cols, lines);
 			const total = rows * cols;
-			const initialTiles = Array.from({ length: total }, () => ({
-				char: CHAR_SET.charAt(Math.floor(Math.random() * CHAR_SET.length)),
-				isMessage: false,
-			}));
+
+			const initialTiles = Array.from({ length: total }, (_, index) => {
+				const messageChar = messageTilesMap.get(index);
+				return {
+					char:
+						messageChar ||
+						CHAR_SET.charAt(Math.floor(Math.random() * CHAR_SET.length)),
+					isMessage: Boolean(messageChar),
+				};
+			});
+
 			setTiles(initialTiles);
+			initialTiles.forEach((tile, i) => {
+				if (tile.isMessage) {
+					console.log(tile);
+				}
+			});
 		}
 	}, [rows, cols]);
 
-	// Random updates every 0.5s
+	// Random updates every 0.5s for non-message tiles
 	useEffect(() => {
-		intervalRef.current = setInterval(() => {
+		const interval = setInterval(() => {
 			setTiles((prev) => {
 				if (!prev.length) return prev;
 				const newTiles = [...prev];
 				const total = newTiles.length;
 				const count = Math.floor(total * 0.1);
-
 				for (let i = 0; i < count; i++) {
 					const idx = Math.floor(Math.random() * total);
 					if (!newTiles[idx].isMessage) {
@@ -74,89 +107,8 @@ export default function Landing2() {
 			});
 		}, 500);
 
-		return () => {
-			if (intervalRef.current) {
-				clearInterval(intervalRef.current);
-			}
-		};
+		return () => clearInterval(interval);
 	}, []);
-
-	// Compute message tiles
-	useEffect(() => {
-		if (rows === 0 || cols === 0) return;
-
-		const startRow = Math.floor(rows / 2) - Math.floor(lines.length / 2);
-		const startCol = Math.floor(cols / 2) - Math.floor(longestLine / 2);
-
-		const newMessageTiles = [];
-		lines.forEach((line, l) => {
-			const lineRow = startRow + l;
-			for (let c = 0; c < line.length; c++) {
-				const colPos = startCol + c;
-				if (lineRow >= 0 && lineRow < rows && colPos >= 0 && colPos < cols) {
-					newMessageTiles.push(lineRow * cols + colPos);
-				}
-			}
-		});
-
-		setMessageTiles(newMessageTiles);
-		setMessageIndex(0); // Reset message index when tiles change
-	}, [rows, cols, lines.length, longestLine]);
-
-	// Typewriter effect
-	useEffect(() => {
-		// Clear any existing timeouts/intervals
-		if (typewriterRef.current) {
-			clearTimeout(typewriterRef.current);
-		}
-
-		if (messageTiles.length === 0 || messageIndex >= messageTiles.length) {
-			return;
-		}
-
-		typewriterRef.current = setTimeout(() => {
-			const typewriterInterval = setInterval(() => {
-				setTiles((prev) => {
-					const newTiles = [...prev];
-					const currentIndex = messageIndex;
-
-					if (currentIndex >= messageTiles.length) {
-						clearInterval(typewriterInterval);
-						return prev;
-					}
-
-					const tileIndex = messageTiles[currentIndex];
-					const char =
-						messageChars[currentIndex] === "\n"
-							? " "
-							: messageChars[currentIndex];
-
-					newTiles[tileIndex] = {
-						char,
-						isMessage: true,
-					};
-
-					return newTiles;
-				});
-
-				setMessageIndex((prev) => {
-					if (prev < messageTiles.length) {
-						return prev + 1;
-					}
-					clearInterval(typewriterInterval);
-					return prev;
-				});
-			}, 100);
-
-			return () => clearInterval(typewriterInterval);
-		}, 3000);
-
-		return () => {
-			if (typewriterRef.current) {
-				clearTimeout(typewriterRef.current);
-			}
-		};
-	}, [messageTiles]); // Only re-run when messageTiles changes
 
 	return (
 		<div
@@ -170,18 +122,13 @@ export default function Landing2() {
 			}}
 		>
 			{tiles.map((tile, i) => (
-				<Tile
-					key={i}
-					char={tile.char}
-					isMessage={tile.isMessage}
-					// isInverted={i % 2 === 0} // Example: alternating pattern
-				/>
+				<Tile key={i} char={tile.char} isMessage={tile.isMessage} />
 			))}
 		</div>
 	);
 }
 
-const Tile = ({ char, isMessage, isInverted = false }) => {
+const Tile = ({ char, isMessage }) => {
 	const [isHovered, setIsHovered] = useState(false);
 
 	const primaryStyle = {
@@ -192,16 +139,16 @@ const Tile = ({ char, isMessage, isInverted = false }) => {
 	const secondaryStyle = {
 		backgroundColor: "#ffffff",
 		color: "var(--color-primary-dark)",
+		fontWeight: "bold",
+		fontSize: "45px",
 	};
-
-	const toggle = Number(isInverted) + Number(isHovered);
-
+	const toggle = Number(isMessage) + Number(isHovered);
 	const style = {
-		...(toggle % 2 ? secondaryStyle : primaryStyle),
 		fontFamily: "PPMondwest, monospace",
 		fontSize: "24px",
 		padding: "2px",
 		lineHeight: 1,
+		...(toggle % 2 ? secondaryStyle : primaryStyle),
 	};
 
 	return (

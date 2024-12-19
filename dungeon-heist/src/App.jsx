@@ -3,7 +3,7 @@ import IsometricGrid from "./components/IsometricGrid";
 import Navbar from "./components/Navbar";
 import BottomBar from "./components/BottomBar";
 import Sidebar from "./components/Sidebar";
-
+import MatrixTerminal from "./components/Landing";
 const App = () => {
 	const [players, setPlayers] = useState([
 		{ id: "P1", imgURL: "/assets/chamica.png", x: 5, y: 5 },
@@ -19,10 +19,11 @@ const App = () => {
 
 	return (
 		<div className="w-screen h-screen overflow-hidden relative">
-			<Sidebar />
+			<MatrixTerminal />
+			{/* <Sidebar />
 			<Navbar />
 			<IsometricGrid players={players} />
-			<BottomBar setPlayers={setPlayers} />
+			<BottomBar setPlayers={setPlayers} /> */}
 		</div>
 	);
 };

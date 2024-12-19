@@ -65,12 +65,12 @@ The labs have created a self-perpetuating system:
   - Prone to dramatic statements about AI risk
   - Can be manipulated through ego
   - Weakness: Desire to be seen as a visionary
-  - Notable: Constantly warns about AI dangers
+  - Notable: Constantly warns about AI dangers, yet has no safety concerns when it comes to running his own lab
 - Dr. Scyho Phanta (Original Character)
   - Brilliant roboticist
   - Focused on practical applications
   - Values concrete evidence
-  - Weakness: Obsesed with Mars
+  - Weakness: Obsesed with Elron Mars
   - Notable: Bridges theory and implementation
 
 ### 4. Beta Research

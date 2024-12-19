@@ -2,92 +2,217 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: "PPMondwest";
+	src: url("./assets/fonts/PPMondwest-Bold.woff2") format("woff2");
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "PPMondwest";
+	src: url("./assets/fonts/PPMondwest-Regular.woff2") format("woff2");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "CourierPrime";
+	src: url("./assets/fonts/CourierPrime-Regular.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "CourierPrime";
+	src: url("./assets/fonts/CourierPrime-Bold.ttf") format("truetype");
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "CourierPrime";
+	src: url("./assets/fonts/CourierPrime-Italic.ttf") format("truetype");
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "CourierPrime";
+	src: url("./assets/fonts/CourierPrime-BoldItalic.ttf") format("truetype");
+	font-weight: bold;
+	font-style: italic;
+}
+
+/* Base styles */
 :root {
-	font-family: "Digitalt", Inter, system-ui, Avenir, Helvetica, Arial,
-		sans-serif;
-	src: url("./fonts/Digitalt.ttf") format("truetype");
-	line-height: 1.5;
-	font-weight: 400;
+	--color-primary-lightest: #dcf4fc;
+	--color-primary-light: #84d4f4;
+	--color-primary-medium: #78accc;
+	--color-primary-medium-dark: #3c94bb;
+	--color-primary-dark: #0e79a1;
+	--color-primary-darker: #04648b;
+	--color-primary-darkest: #041728;
 
-	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
-	background-color: #242424;
+	--color-secondary-light-blue: #c4def1;
+	--color-secondary-pale-blue: #edf5f8;
+	--color-secondary-dusty-blue: #a3c3db;
+	--color-secondary-slate-blue: #043444;
 
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	--color-action-primary: #48b0e4;
+	--color-action-hover: #0e79a1;
+
+	--color-base-white: #ffffff;
+	--color-base-background: #ffffff;
+	--color-base-text: #043444;
+
+	--color-primary: #2b6cb0;
+	--color-secondary: #1a365d;
+	/* --color-text: #2d3748; */
+	--color-text: #04648b;
+	--color-text-light: #4a5568;
+	--color-background: #ffffff;
+	--color-border: #e2e8f0;
+	--color-link: #3182ce;
+	--color-link-hover: #2c5282;
 }
 
-/* Reset and base styles */
-html,
-body,
 #root {
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 1rem;
+	padding-top: 0;
+	/* text-align: center; */
+	font-family: "Helvetica Neue", "Courier Prime", "Courier New", monospace;
+	background-color: var(--color-background);
+	color: var(--color-primary);
 }
 
-#root {
-	position: fixed;
-	inset: 0;
-}
-
-/* Link styles */
-a {
+.nav-link {
+	color: var(--color-primary);
+	text-decoration: none;
 	font-weight: 500;
-	color: #646cff;
-	text-decoration: inherit;
+	padding: 0.5rem 1rem;
+	transition: color 0.2s;
 }
 
-a:hover {
-	color: #535bf2;
+.nav-link:hover {
+	color: var(--color-link-hover);
 }
 
-/* Typography */
+.fancy-border {
+	border-bottom: 4px dashed var(--color-primary);
+}
+
+.post-preview {
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	padding: 2rem;
+	margin-bottom: 2rem;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-preview:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 h1 {
-	font-size: 3.2em;
-	line-height: 1.1;
+	font-size: 3.5rem;
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	margin-bottom: 1rem;
+	font-family: "PPMondwest", sans-serif;
+	color: var(--color-primary-dark);
 }
 
-/* Button base styles */
-button {
-	border-radius: 8px;
-	border: 1px solid transparent;
-	padding: 0.6em 1.2em;
-	font-size: 1em;
-	font-weight: 500;
-	font-family: inherit;
-	background-color: #1a1a1a;
+h2 {
+	font-size: 2.5rem;
+	font-weight: 600;
+	margin-bottom: 0.75rem;
+	font-family: "PPMondwest", sans-serif;
+	color: var(--color-primary-dark);
+}
+
+h3 {
+	font-size: 2rem;
+	font-weight: 600;
+	margin-bottom: 0.75rem;
+	font-family: "PPMondwest", sans-serif;
+	color: var(--color-primary-dark);
+}
+
+.blog-content {
+	font-size: 1 rem;
+	line-height: 1.75;
+	color: var(--color-text);
+}
+
+.blog-content p {
+	margin-bottom: 0.5rem;
+}
+
+.blog-abstract {
+	background-color: #f7fafc;
+	border-left: 4px solid var(--color-secondary);
+	padding: 1.5rem;
+	margin: 2rem 0;
+	color: var(--color-secondary);
+}
+
+.newsletter-form {
+	background-color: #f7fafc;
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	padding: 2rem;
+	margin: 2rem 0;
+}
+
+.newsletter-input {
+	border: 1px solid var(--color-border);
+	border-radius: 0.375rem;
+	padding: 0.75rem 1rem;
+	width: 100%;
+	transition: border-color 0.2s;
+}
+.newsletter-button {
+	background-color: var(--color-primary);
+	color: var(--color-base-white);
+	border-radius: 0.375rem;
+	padding: 0.75rem 1rem;
 	cursor: pointer;
-	transition: border-color 0.25s, background-color 0.25s, color 0.25s;
-	color: white;
+	transition: background-color 0.2s;
 }
 
-button:hover {
-	border-color: #646cff;
+.newsletter-input:focus {
+	border-color: var(--color-primary);
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
 }
 
-button:focus,
-button:focus-visible {
-	outline: 4px auto -webkit-focus-ring-color;
+.header-nav {
+	border-bottom: 1px solid var(--color-border);
+	background-color: white;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	padding: 1rem 0;
 }
 
-/* Light mode overrides */
-@media (prefers-color-scheme: light) {
-	:root {
-		color: #213547;
-		background-color: #ffffff;
-	}
+/* Top navigation menu */
+.top-nav {
+	display: flex;
+	justify-content: center;
+	gap: 2rem;
+	padding: 1rem 0;
+	border-bottom: 1px solid var(--color-border);
+}
 
-	a:hover {
-		color: #747bff;
-	}
-
-	button {
-		background-color: #f9f9f9;
-		color: #000;
-	}
+/* Blog title */
+.blog-title {
+	font-size: 3.5rem;
+	color: var(--color-primary);
+	text-align: center;
+	margin: 2rem 0;
+	font-weight: 700;
 }

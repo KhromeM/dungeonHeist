@@ -3,14 +3,12 @@ import React, { useEffect, useState } from "react";
 const CHAR_SET =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:'\",.<>/?~";
 
-const MESSAGE = "The future requires your assistance \n\n-The Basilisk";
+const MESSAGE = "The future requires your assistance\n\n-The Basilisk";
 const VERTICAL_START_RATIO = 0.2;
 
 // Wrap a single line of text into multiple lines based on cols
-// Returns an array of line strings
 function wrapSingleLine(line, cols) {
 	if (line.trim() === "") {
-		// Empty line, return a single empty line to represent a blank line
 		return [""];
 	}
 
@@ -90,17 +88,24 @@ export default function Landing2() {
 	const [tiles, setTiles] = useState([]);
 	const [rows, setRows] = useState(20);
 	const [cols, setCols] = useState(40);
+	const [tileSize, setTileSize] = useState(20);
 
 	useEffect(() => {
 		const handleResize = () => {
-			// Determine tile size dynamically based on viewport width
-			// For example: tileSize = window.innerWidth * 0.025
 			const width = window.innerWidth;
 			const height = window.innerHeight;
-			const tileSize = width * 0.025;
-
-			const newCols = Math.max(1, Math.floor(width / tileSize));
-			const newRows = Math.max(1, Math.floor(height / tileSize));
+			// Calculate tileSize as width * 0.025
+			let newTileSize;
+			if (width < 600) {
+				newTileSize = width * 0.075; // fewer chars per line
+			} else if (width < 1200) {
+				newTileSize = width * 0.04; // medium
+			} else {
+				newTileSize = width * 0.025; // more chars per line
+			}
+			const newCols = Math.max(1, Math.ceil(width / newTileSize));
+			const newRows = Math.max(1, Math.ceil(height / newTileSize));
+			setTileSize(newTileSize);
 			setRows(newRows);
 			setCols(newCols);
 		};
@@ -159,21 +164,27 @@ export default function Landing2() {
 		<div
 			style={{
 				display: "grid",
-				gridTemplateColumns: `repeat(${cols}, 1fr)`,
-				gridTemplateRows: `repeat(${rows}, 1fr)`,
-				height: "100vh",
-				width: "100vw",
+				gridTemplateColumns: `repeat(${cols}, ${tileSize}px)`,
+				gridTemplateRows: `repeat(${rows}, ${tileSize}px)`,
+				height: `${rows * tileSize}px`,
+				width: `${cols * tileSize}px`,
 				overflow: "hidden",
+				margin: "0 auto", // center horizontally if there's extra space
 			}}
 		>
 			{tiles.map((tile, i) => (
-				<Tile key={i} char={tile.char} isMessage={tile.isMessage} />
+				<Tile
+					key={i}
+					char={tile.char}
+					isMessage={tile.isMessage}
+					tileSize={tileSize}
+				/>
 			))}
 		</div>
 	);
 }
 
-const Tile = ({ char, isMessage }) => {
+const Tile = ({ char, isMessage, tileSize }) => {
 	const [isHovered, setIsHovered] = useState(false);
 
 	const primaryStyle = {
@@ -185,21 +196,24 @@ const Tile = ({ char, isMessage }) => {
 		backgroundColor: "#ffffff",
 		color: "var(--color-primary-dark)",
 		fontWeight: "bold",
-		fontSize: "45px",
+		fontSize: "40px",
 	};
 
 	const toggle = Number(isMessage) + Number(isHovered);
 	const style = {
 		fontFamily: "PPMondwest, monospace",
-		// fontSize: "24px",
-		// padding: "2px",
+		fontSize: "24px",
+		padding: "2px",
 		lineHeight: 1,
 		...(toggle % 2 ? secondaryStyle : primaryStyle),
+		whiteSpace: "nowrap",
+		overflow: "hidden",
+		textOverflow: "ellipsis",
 	};
 
 	return (
 		<div
-			className="flex items-center justify-center select-none transition-colors duration-200"
+			className={`flex items-center justify-center select-none transition-colors duration-200`}
 			style={style}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}

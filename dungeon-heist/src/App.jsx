@@ -3,7 +3,7 @@ import IsometricGrid from "./components/IsometricGrid";
 import Navbar from "./components/Navbar";
 import BottomBar from "./components/BottomBar";
 import Sidebar from "./components/Sidebar";
-import MatrixTerminal from "./components/Landing";
+import MatrixTerminal from "./components/Landing2";
 const App = () => {
 	const [players, setPlayers] = useState([
 		{ id: "P1", imgURL: "/assets/chamica.png", x: 5, y: 5 },

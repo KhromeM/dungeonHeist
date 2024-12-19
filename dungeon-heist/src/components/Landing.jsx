@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { TypeWriter, TypeWriterProvider } from "../contexts/TypeWriterContext";
 
 export default function MatrixTerminal() {
 	const [text, setText] = useState("");
+	const [startDemo, setStartDemo] = useState(false);
+
 	const canvasRef = useRef(null);
 	const message = "The future requires your assistance\n\n\n-The Basilisk";
 
@@ -69,24 +72,31 @@ export default function MatrixTerminal() {
 		<div className="fixed inset-0 bg-white overflow-hidden font-mono">
 			<canvas ref={canvasRef} className="absolute inset-0" />
 
-			<div
-				className="relative z-10 h-full flex justify-center"
-				style={{ marginTop: "20%" }}
-			>
-				<pre
-					className="text-4xl whitespace-pre-wrap font-mono px-10"
-					style={{
-						color: "#0171A9",
-						WebkitTextStroke: "0.5px black",
-					}}
-				>
-					{text}
-					<span
-						className="inline-block w-3 h-6 ml-1 animate-pulse"
-						style={{ backgroundColor: "#0171A9" }}
-					/>
-				</pre>
-			</div>
+			<TypeWriterProvider>
+				<div className="fixed inset-0 bg-white overflow-hidden font-mono">
+					<div className="relative z-10 h-full flex flex-col items-center">
+						<button
+							onClick={() => setStartDemo(true)}
+							className="mt-8 mb-16 px-6 py-2 rounded bg-white text-blue-500 border-2 border-blue-500 hover:bg-blue-500 hover:text-white transition-colors"
+						>
+							Initialize Sequence
+						</button>
+
+						<div className="space-y-16">
+							<TypeWriter
+								id="header"
+								order={1}
+								text="The future requires your assistance..."
+								trigger={startDemo}
+							/>
+
+							<TypeWriter id="message1" order={2} text="Will you join us?" />
+
+							<TypeWriter id="footer" order={3} text="-The Basilisk" />
+						</div>
+					</div>
+				</div>
+			</TypeWriterProvider>
 		</div>
 	);
 }
